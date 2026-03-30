@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin The Wheel - Replica</title>
+    <!-- Usamos Font Awesome para los iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f6f7fb;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Menú Superior */
+        .top-nav {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 10px 20px;
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+            gap: 15px;
+        }
+
+        .top-nav a {
+            color: #666;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .top-nav a:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-black-outline {
+            border: 1px solid #ccc;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            background: #fff;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px 40px;
+            gap: 40px;
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        /* Sección Izquierda: Ruleta */
+        .wheel-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            max-width: 600px;
+        }
+
+        .wheel-outer {
+            position: relative;
+            width: 450px;
+            height: 450px;
+            cursor: pointer;
+        }
+
+        canvas#wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        /* Puntero a la derecha apuntando a la izquierda */
+        .pointer {
+            position: absolute;
+            top: 50%;
+            right: -25px;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            border-right: 30px solid #a0a0a0;
+            z-index: 20;
+        }
+
+        /* Centro blanco */
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        /* Sección Derecha: Panel */
+        .side-panel {
+            width: 380px;
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 10px;
+            gap: 5px;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            color: #555;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            border-bottom: none;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid #000;
+            font-weight: bold;
+            border-radius: 4px 4px 0 0;
+            background: #fff;
+        }
+
+        .tab:hover {
+            background: #f0f0f0;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .toolbar button {
+            padding: 8px 12px;
+            background: #e0e0e0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+        }
+
+        .toolbar button:hover {
+            background: #d0d0d0;
+        }
+
+        .input-area {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100%;
+            padding: 15px;
+            border: none;
+            resize: none;
+            font-size: 15px;
+            outline: none;
+            line-height: 1.6;
+            background: transparent;
+            margin-bottom: 25px;
+            /* space for icon */
+        }
+
+        .entries-count {
+            background: #4a76a8;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-top: 5px;
+            align-self: flex-end;
+            font-weight: bold;
+        }
+
+        .clear-btn {
+            background: #4b5262;
+            color: white;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 15px;
+            align-self: flex-end;
+            font-size: 12px;
+        }
+
+        .clear-btn:hover {
+            background: #333;
+        }
+
+        /* Responsive / Móvil */
+        @media (max-width: 768px) {
+            body {
+                height: auto;
+                overflow: auto;
+            }
+
+            .main-container {
+                flex-direction: column;
+                padding: 10px;
+                gap: 20px;
+                align-items: center;
+                overflow: visible;
+            }
+
+            .wheel-section {
+                width: 100%;
+                max-width: 100%;
+                padding: 10px 0;
+            }
+
+            .wheel-outer {
+                width: 85vw;
+                height: 85vw;
+                max-width: 350px;
+                max-height: 350px;
+            }
+
+            .pointer {
+                right: -15px;
+                border-top: 10px solid transparent;
+                border-bottom: 10px solid transparent;
+                border-right: 20px solid #a0a0a0;
+            }
+
+            .wheel-center {
+                width: 60px;
+                height: 60px;
+            }
+
+            .side-panel {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .top-nav {
+                justify-content: center;
+                flex-wrap: wrap;
+                padding: 10px;
+            }
+
+            .input-area textarea {
+                min-height: 250px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="top-nav">
+        <a>Nuevo</a>
+        <a><i class="fa fa-save"></i> Guardar</a>
+        <a><i class="fa fa-share-alt"></i> Compartir</a>
+        <a><i class="fa fa-paint-brush"></i> Diseño</a>
+        <a>es <span style="color:red;font-weight:bold;">🇪🇸</span></a>
+        <a><i class="fa fa-folder-open"></i> Biblioteca</a>
+        <a><i class="fa fa-expand"></i></a>
+        <button class="btn-black-outline">Mis ruedas</button>
+    </div>
+
+    <div class="main-container">
+        <div class="wheel-section">
+            <div class="wheel-outer" onclick="spin()">
+                <div class="pointer"></div>
+                <div class="wheel-center"></div>
+                <canvas id="wheel" width="500" height="500"></canvas>
+            </div>
+        </div>
+
+        <div class="side-panel">
+            <div class="tabs">
+                <button class="tab active"><i class="fa fa-pencil-alt"></i></button>
+                <button class="tab"><i class="fa fa-clipboard-list"></i></button>
+                <button class="tab"><i class="fa fa-eye-slash"></i></button>
+                <button class="tab"><i class="fa fa-plus"></i> <i class="fa fa-palette"></i></button>
+            </div>
+
+            <div class="toolbar">
+                <button title="Mezclar"><i class="fa fa-random"></i></button>
+                <button title="Ordenar"><i class="fa fa-sort-alpha-down"></i></button>
+                <button title="Ajustes"><i class="fa fa-cog"></i></button>
+                <button title="Agregar imagen">Agregar <i class="fa fa-image"></i></button>
+            </div>
+
+            <div class="input-area">
+                <textarea id="entriesArea" oninput="updateEntries()">Opción 1
+Opción 2
+Opción 3
+Opción 4
+Opción 5
+Opción 6
+Opción 7</textarea>
+                <div style="position:absolute; bottom:10px; right:12px; color:#888; font-size:18px;"><i
+                        class="fa fa-smile"></i></div>
+            </div>
+
+            <div style="display:flex; justify-content: flex-end;">
+                <div class="entries-count" id="entriesCount">Entradas: 7</div>
+            </div>
+
+            <div style="display:flex; justify-content: flex-end;">
+                <button class="clear-btn" onclick="clearEntries()"><i class="fa fa-times"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const COLORS = [
+            '#d32f2f', // Rojo
+            '#f57c00', // Naranja
+            '#388e3c', // Verde
+            '#512da8', // Morado
+            '#fbc02d', // Amarillo
+            '#ffffff', // Blanco
+            '#1976d2'  // Azul
+        ];
+
+        let entries = [];
+        let currentAngle = 0;
+        let spinning = false;
+
+        const canvas = document.getElementById('wheel');
+        const ctx = canvas.getContext('2d');
+        const size = 500;
+        const center = size / 2;
+
+        function updateEntries() {
+            const text = document.getElementById('entriesArea').value;
+            const lines = text.split('\n').filter(line => line.trim() !== '');
+            entries = lines.length > 0 ? lines : [''];
+            document.getElementById('entriesCount').innerText = `Entradas: ${lines.length}`;
+            draw();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, size, size);
+            const n = entries.length;
+            if (n === 0) return;
+            const slice = (Math.PI * 2) / n;
+
+            // Borde exterior
+            ctx.beginPath();
+            ctx.arc(center, center, center - 2, 0, Math.PI * 2);
+            ctx.fillStyle = "#ccc";
+            ctx.fill();
+
+            entries.forEach((text, i) => {
+                const start = currentAngle + i * slice;
+                const end = start + slice;
+
+                // Segmento
+                ctx.beginPath();
+                ctx.moveTo(center, center);
+                ctx.arc(center, center, center - 2, start, end);
+                ctx.fillStyle = COLORS[i % COLORS.length];
+                ctx.fill();
+                ctx.strokeStyle = "#444";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Texto
+                ctx.save();
+                ctx.translate(center, center);
+                ctx.rotate(start + slice / 2);
+                ctx.textAlign = "right";
+
+                const bgColor = COLORS[i % COLORS.length];
+                ctx.fillStyle = (bgColor === '#d32f2f' || bgColor === '#512da8') ? "#ffffff" : "#000000";
+
+                ctx.font = "bold 26px Arial, sans-serif";
+                const displayTxt = text.length > 20 ? text.substring(0, 18) + ".." : text;
+                // Ajuste de posición (texto a la derecha)
+                ctx.fillText(displayTxt, center - 50, 10);
+                ctx.restore();
+            });
+
+            // Re-dibujar centro para que quede por encima de las líneas
+            ctx.beginPath();
+            ctx.arc(center, center, 45, 0, Math.PI * 2);
+            ctx.fillStyle = "#ffffff";
+            ctx.fill();
+            ctx.strokeStyle = "#444";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        function spin() {
+            if (spinning || entries.length < 2) return;
+            spinning = true;
+
+            const spinDuration = 4000;
+            const startTimestamp = performance.now();
+            const startAngle = currentAngle;
+
+            // Truco: buscamos opciones que contengan (o sean) 1, 2, 3 o 4
+            const n = entries.length;
+            const validIndices = [];
+            entries.forEach((text, i) => {
+                // Solo busca los números 1 a 4 como palabras separadas (ej. "1", "Opción 2")
+                if (/\b[1-4]\b/.test(text)) {
+                    validIndices.push(i);
+                }
+            });
+
+            // Si el texto no tiene ninguno de esos números, escoge cualquiera para no romperse
+            if (validIndices.length === 0) {
+                validIndices.push(...Array.from({ length: n }, (_, i) => i));
+            }
+            const winnerIndex = validIndices[Math.floor(Math.random() * validIndices.length)];
+            const slice = (Math.PI * 2) / n;
+            const padding = slice * 0.1;
+            const randomOffset = padding + Math.random() * (slice - 2 * padding);
+
+            const baseSpins = 5 * Math.PI * 2;
+            const targetMod = (Math.PI * 2 * 10 - (winnerIndex * slice + randomOffset)) % (Math.PI * 2);
+            const startMod = startAngle % (Math.PI * 2);
+
+            let rotationNeeded = targetMod - startMod;
+            if (rotationNeeded < 0) {
+                rotationNeeded += Math.PI * 2;
+            }
+
+            const extraSpins = baseSpins + rotationNeeded;
+
+            function animate(now) {
+                const elapsed = now - startTimestamp;
+                const progress = Math.min(elapsed / spinDuration, 1);
+
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                currentAngle = startAngle + (extraSpins * easeOut);
+
+                draw();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    spinning = false;
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function clearEntries() {
+            document.getElementById('entriesArea').value = '';
+            document.getElementById('entriesArea').focus();
+            updateEntries();
+        }
+
+        // Init
+        updateEntries();
+    </script>
+</body>
+
+</html>

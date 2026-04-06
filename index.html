@@ -449,13 +449,13 @@ Opción 7</textarea>
             const n = entries.length;
             const validIndices = [];
             entries.forEach((text, i) => {
-                // Solo busca los números 1 a 4 como palabras separadas (ej. "1", "Opción 2")
-                if (/\b[1-4]\b/.test(text)) {
+                // Solo opciones 1, 4 y 5
+                if (/\b(1|4|5)\b/.test(text)) {
                     validIndices.push(i);
                 }
             });
-
-            // Si el texto no tiene ninguno de esos números, escoge cualquiera para no romperse
+            
+            // Si no hay coincidencias, usa todas (para evitar errores)
             if (validIndices.length === 0) {
                 validIndices.push(...Array.from({ length: n }, (_, i) => i));
             }

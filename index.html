@@ -449,8 +449,8 @@ Opción 7</textarea>
             const n = entries.length;
             const validIndices = [];
             entries.forEach((text, i) => {
-                // Solo opciones 1, 4 y 5
-                if (/\b(1|2|4|5)\b/.test(text)) {
+                // Solo opciones 1, 3 y 4
+                if (/\b(1|3|4)\b/.test(text)) {
                     validIndices.push(i);
                 }
             });

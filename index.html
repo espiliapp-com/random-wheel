@@ -213,11 +213,11 @@ Opción 4</textarea>
 
     const slice = (Math.PI * 2) / n;
 
-    const targetAngle = (winnerIndex * slice);
+    const targetAngle = (winnerIndex * slice) + (slice / 2);
 
     const spins = 6 * Math.PI * 2;
 
-    const finalAngle = spins + (Math.PI * 2 - targetAngle);
+    const finalAngle = spins + (Math.PI * 2 - targetAngle) - (Math.PI / 2);
 
     const start = currentAngle;
 

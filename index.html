@@ -195,13 +195,13 @@ Opción 4</textarea>
 
     entries.forEach((text, i) => {
 
-        const cleanText = text.trim();
+    const cleanText = text.trim();
 
-        // Prioriza solo 2 y 4
-        if (cleanText === "2" || cleanText === "4") {
-            validIndices.push(i);
-        }
-    });
+    // Prioriza opciones que contengan 2 o 4
+    if (cleanText.includes("2") || cleanText.includes("4")) {
+        validIndices.push(i);
+    }
+});
 
     // Si ya no existen 2 o 4, usa cualquier opción
     if (validIndices.length === 0) {

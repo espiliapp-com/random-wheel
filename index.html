@@ -223,13 +223,14 @@ Opción 4</textarea>
     */
 
     const targetAngle =
-        (Math.PI * 2) - (winnerIndex * slice) - (slice / 2);
+    (Math.PI * 2) - ((winnerIndex + 0.5) * slice);
 
     // Vueltas extra
     const extraSpins = 6 * Math.PI * 2;
 
     // Ángulo final
-    const finalAngle = extraSpins + targetAngle;
+    const finalAngle =
+    extraSpins + targetAngle + (slice / 2);
 
     const startAngle = currentAngle;
 

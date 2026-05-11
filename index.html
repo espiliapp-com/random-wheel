@@ -213,22 +213,18 @@ Opción 4</textarea>
 
     // Elegir ganador aleatorio
     const winnerIndex =
-        validIndices[Math.floor(Math.random() * validIndices.length)];
+    validIndices[Math.floor(Math.random() * validIndices.length)];
 
-    const slice = (Math.PI * 2) / n;
+const slice = (Math.PI * 2) / n;
 
-    /*
-      ESTE cálculo era el correcto visualmente
-      en tu código original.
-    */
+// CENTRO EXACTO del segmento
+const targetAngle =
+    (winnerIndex * slice) + (slice / 2);
 
-    const targetAngle = (winnerIndex * slice);
+const spins = 6 * Math.PI * 2;
 
-    const spins = 6 * Math.PI * 2;
-
-    const finalAngle =
-        spins + (Math.PI * 2 - targetAngle);
-
+const finalAngle =
+    spins + (Math.PI * 2 - targetAngle);
     const start = currentAngle;
 
     const duration = 4000;

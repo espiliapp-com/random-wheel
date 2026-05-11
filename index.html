@@ -185,50 +185,71 @@ Opción 4</textarea>
         }
 
         function spin() {
-            if (spinning) return;
-            spinning = true;
+    if (spinning) return;
 
-            const n = entries.length;
+    spinning = true;
 
-            let validIndices = [];
-            entries.forEach((text, i) => {
-                if (/\b(2|4)\b/.test(text)) {
-                    validIndices.push(i);
-                }
-            });
+    const n = entries.length;
 
-            if (validIndices.length === 0) {
-                validIndices = entries.map((_, i) => i);
-            }
+    let validIndices = [];
 
-            const winnerIndex = validIndices[Math.floor(Math.random() * validIndices.length)];
+    entries.forEach((text, i) => {
 
-            const slice = (Math.PI * 2) / n;
-            const targetAngle = (winnerIndex * slice);
+        const cleanText = text.trim();
 
-            const spins = 6 * Math.PI * 2;
-            const finalAngle = spins + (Math.PI * 2 - targetAngle);
+        // Prioriza solo 2 y 4
+        if (cleanText === "2" || cleanText === "4") {
+            validIndices.push(i);
+        }
+    });
 
-            const start = currentAngle;
-            const duration = 4000;
-            const startTime = performance.now();
+    // Si ya no existen 2 o 4, usa cualquier opción
+    if (validIndices.length === 0) {
+        validIndices = entries.map((_, i) => i);
+    }
 
-            function animate(now) {
-                const progress = Math.min((now - startTime) / duration, 1);
-                const ease = 1 - Math.pow(1 - progress, 3);
+    const winnerIndex =
+        validIndices[Math.floor(Math.random() * validIndices.length)];
 
-                currentAngle = start + (finalAngle * ease);
-                draw();
+    const slice = (Math.PI * 2) / n;
 
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                } else {
-                    spinning = false;
-                }
-            }
+    const targetAngle = (winnerIndex * slice);
+
+    const spins = 6 * Math.PI * 2;
+
+    const finalAngle = spins + (Math.PI * 2 - targetAngle);
+
+    const start = currentAngle;
+
+    const duration = 4000;
+
+    const startTime = performance.now();
+
+    function animate(now) {
+
+        const progress =
+            Math.min((now - startTime) / duration, 1);
+
+        const ease =
+            1 - Math.pow(1 - progress, 3);
+
+        currentAngle =
+            start + (finalAngle * ease);
+
+        draw();
+
+        if (progress < 1) {
 
             requestAnimationFrame(animate);
+
+        } else {
+
+            spinning = false;
         }
+    }
+
+    requestAnimationFrame(animate);
+}
 
         updateEntries();
     </script>

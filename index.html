@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spin The Wheel - Replica</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         * {
@@ -122,25 +123,44 @@
     </div>
 
     <div class="main-container">
+
         <div class="wheel-section">
             <div class="wheel-outer" onclick="spin()">
+
                 <div class="pointer"></div>
+
                 <div class="wheel-center"></div>
+
                 <canvas id="wheel" width="500" height="500"></canvas>
+
             </div>
         </div>
 
         <div class="side-panel">
+
             <textarea id="entriesArea" oninput="updateEntries()">Opción 1
 Opción 2
 Opción 3
 Opción 4</textarea>
-            <div class="entries-count" id="entriesCount">Entradas: 4</div>
+
+            <div class="entries-count" id="entriesCount">
+                Entradas: 4
+            </div>
+
         </div>
+
     </div>
 
     <script>
-        const COLORS = ['#d32f2f', '#f57c00', '#388e3c', '#512da8', '#fbc02d', '#1976d2'];
+
+        const COLORS = [
+            '#d32f2f',
+            '#f57c00',
+            '#388e3c',
+            '#512da8',
+            '#fbc02d',
+            '#1976d2'
+        ];
 
         let entries = [];
         let currentAngle = 0;
@@ -148,108 +168,173 @@ Opción 4</textarea>
 
         const canvas = document.getElementById('wheel');
         const ctx = canvas.getContext('2d');
+
         const size = 500;
         const center = size / 2;
 
         function updateEntries() {
-            const text = document.getElementById('entriesArea').value;
-            const lines = text.split('\n').filter(l => l.trim() !== '');
-            entries = lines.length > 0 ? lines : ['Sin opciones'];
-            document.getElementById('entriesCount').innerText = "Entradas: " + lines.length;
+
+            const text =
+                document.getElementById('entriesArea').value;
+
+            const lines =
+                text.split('\n')
+                .filter(l => l.trim() !== '');
+
+            entries =
+                lines.length > 0
+                    ? lines
+                    : ['Sin opciones'];
+
+            document.getElementById('entriesCount').innerText =
+                "Entradas: " + lines.length;
+
             draw();
         }
 
         function draw() {
+
             ctx.clearRect(0, 0, size, size);
+
             const n = entries.length;
-            const slice = (Math.PI * 2) / n;
+
+            const slice =
+                (Math.PI * 2) / n;
 
             entries.forEach((text, i) => {
-                const start = currentAngle + i * slice;
+
+                const start =
+                    currentAngle + i * slice;
 
                 ctx.beginPath();
+
                 ctx.moveTo(center, center);
-                ctx.arc(center, center, center - 2, start, start + slice);
-                ctx.fillStyle = COLORS[i % COLORS.length];
+
+                ctx.arc(
+                    center,
+                    center,
+                    center - 2,
+                    start,
+                    start + slice
+                );
+
+                ctx.fillStyle =
+                    COLORS[i % COLORS.length];
+
                 ctx.fill();
 
                 ctx.save();
+
                 ctx.translate(center, center);
+
                 ctx.rotate(start + slice / 2);
+
                 ctx.textAlign = "right";
+
                 ctx.fillStyle = "#000";
+
                 ctx.font = "bold 20px Arial";
-                ctx.fillText(text, center - 20, 5);
+
+                ctx.fillText(
+                    text,
+                    center - 20,
+                    5
+                );
+
                 ctx.restore();
             });
         }
 
         function spin() {
-    if (spinning) return;
-    spinning = true;
 
-    const n = entries.length;
+            if (spinning) return;
 
-    let validIndices = [];
+            spinning = true;
 
-    entries.forEach((text, i) => {
-        if (/\b(2|4)\b/.test(text)) {
-            validIndices.push(i);
-        }
-    });
+            const n = entries.length;
 
-    // SI NO EXISTEN 2 O 4,
-    // USA TODAS LAS OPCIONES
-    if (validIndices.length === 0) {
-        validIndices = entries.map((_, i) => i);
-    }
+            let validIndices = [];
 
-    const winnerIndex =
-        validIndices[Math.floor(Math.random() * validIndices.length)];
+            // Buscar opciones que tengan 2 o 4
+            entries.forEach((text, i) => {
 
-    const slice = (Math.PI * 2) / n;
+                if (/\b(2|4)\b/.test(text)) {
 
-    const targetAngle = (winnerIndex * slice);
+                    validIndices.push(i);
+                }
+            });
 
-    const spins = 6 * Math.PI * 2;
+            // Si NO hay 2 o 4,
+            // usar cualquier opción
+            if (validIndices.length === 0) {
 
-    const finalAngle =
-        spins + (Math.PI * 2 - targetAngle);
+                validIndices =
+                    entries.map((_, i) => i);
+            }
 
-    const start = currentAngle;
+            // Elegir ganador
+            const winnerIndex =
+                validIndices[
+                    Math.floor(
+                        Math.random() * validIndices.length
+                    )
+                ];
 
-    const duration = 4000;
+            const slice =
+                (Math.PI * 2) / n;
 
-    const startTime = performance.now();
+            const targetAngle =
+                (winnerIndex * slice);
 
-    function animate(now) {
+            const spins =
+                6 * Math.PI * 2;
 
-        const progress =
-            Math.min((now - startTime) / duration, 1);
+            const finalAngle =
+                spins +
+                (Math.PI * 2 - targetAngle);
 
-        const ease =
-            1 - Math.pow(1 - progress, 3);
+            const start =
+                currentAngle;
 
-        currentAngle =
-            start + (finalAngle * ease);
+            const duration =
+                4000;
 
-        draw();
+            const startTime =
+                performance.now();
 
-        if (progress < 1) {
+            function animate(now) {
+
+                const progress =
+                    Math.min(
+                        (now - startTime) / duration,
+                        1
+                    );
+
+                const ease =
+                    1 - Math.pow(1 - progress, 3);
+
+                currentAngle =
+                    start + (finalAngle * ease);
+
+                draw();
+
+                if (progress < 1) {
+
+                    requestAnimationFrame(animate);
+
+                } else {
+
+                    spinning = false;
+                }
+            }
 
             requestAnimationFrame(animate);
-
-        } else {
-
-            spinning = false;
         }
-    }
-
-    requestAnimationFrame(animate);
-}
 
         updateEntries();
+
     </script>
 
 </body>
+
 </html>

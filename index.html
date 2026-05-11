@@ -194,45 +194,42 @@ Opción 4</textarea>
 
     let validIndices = [];
 
-    // Buscar opciones 2 o 4
+    // Buscar opciones que contengan 2 o 4
     entries.forEach((text, i) => {
 
         const cleanText = text.trim();
 
         if (cleanText.includes("2") || cleanText.includes("4")) {
+
             validIndices.push(i);
         }
     });
 
-    // Si no existen 2 o 4, usar cualquier opción
+    // Si no existen 2 o 4, usar todas
     if (validIndices.length === 0) {
 
         validIndices = entries.map((_, i) => i);
     }
 
-    // Elegir ganador
+    // Elegir ganador aleatorio
     const winnerIndex =
         validIndices[Math.floor(Math.random() * validIndices.length)];
 
     const slice = (Math.PI * 2) / n;
 
     /*
-      La flecha está a la derecha.
-      El ángulo correcto para centrar
-      el ganador es este:
+      ESTE cálculo era el correcto visualmente
+      en tu código original.
     */
 
-    const targetAngle =
-    (Math.PI * 2) - ((winnerIndex + 0.5) * slice);
+    const targetAngle = (winnerIndex * slice);
 
-    // Vueltas extra
-    const extraSpins = 6 * Math.PI * 2;
+    const spins = 6 * Math.PI * 2;
 
-    // Ángulo final
     const finalAngle =
-    extraSpins + targetAngle + (slice / 2);
+        spins + (Math.PI * 2 - targetAngle);
 
-    const startAngle = currentAngle;
+    const start = currentAngle;
 
     const duration = 4000;
 
@@ -247,7 +244,7 @@ Opción 4</textarea>
             1 - Math.pow(1 - progress, 3);
 
         currentAngle =
-            startAngle + (finalAngle * ease);
+            start + (finalAngle * ease);
 
         draw();
 
@@ -259,7 +256,6 @@ Opción 4</textarea>
 
             spinning = false;
 
-            // Normalizar ángulo
             currentAngle =
                 currentAngle % (Math.PI * 2);
 
